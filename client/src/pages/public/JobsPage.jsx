@@ -1,48 +1,110 @@
-import React from 'react';
-import { Search, MapPin, Filter, Briefcase } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { jobService } from '../../services/job.service';
+import { JobFilters } from '../../components/jobs/JobFilters';
+import { JobList } from '../../components/jobs/JobList';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const JobsPage = () => {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalResults: 0,
+  });
+
+  const [filters, setFilters] = useState({
+    search: '',
+    location: '',
+    type: '',
+    remote: '',
+    page: 1,
+  });
+
+  const fetchJobs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await jobService.getJobs(filters);
+      const data = res.data || res;
+      setJobs(data.results || []);
+      setPagination({
+        currentPage: data.currentPage || 1,
+        totalPages: data.totalPages || 1,
+        totalResults: data.totalResults || 0,
+      });
+    } catch (err) {
+      setError(err.message || 'Failed to load jobs');
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
+
+  const handleResetFilters = () => {
+    setFilters({
+      search: '',
+      location: '',
+      type: '',
+      remote: '',
+      page: 1,
+    });
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      setFilters((prev) => ({ ...prev, page: newPage }));
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Explore Internships & Jobs</h1>
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+          Explore Internships & Jobs
+        </h1>
         <p className="text-slate-600 text-sm mt-1">
-          Search hundreds of active opportunities across top companies
+          {pagination.totalResults} active opportunities found across verified companies
         </p>
       </div>
 
-      {/* Search & Filter Bar Placeholder */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-4">
-        <div className="flex-1 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-full">
-          <Search className="w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search by job title, skill, or keyword..."
-            className="bg-transparent text-sm text-slate-800 focus:outline-none w-full"
-          />
+      <JobFilters
+        filters={filters}
+        onFilterChange={setFilters}
+        onReset={handleResetFilters}
+      />
+
+      <JobList jobs={jobs} loading={loading} error={error} />
+
+      {/* Pagination Controls */}
+      {!loading && pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-slate-200 pt-6">
+          <p className="text-xs font-semibold text-slate-500">
+            Page {pagination.currentPage} of {pagination.totalPages} ({pagination.totalResults} results)
+          </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
+              disabled={pagination.currentPage <= 1}
+              className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
+              disabled={pagination.currentPage >= pagination.totalPages}
+              className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-
-        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-full md:w-64">
-          <MapPin className="w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Location or Remote"
-            className="bg-transparent text-sm text-slate-800 focus:outline-none w-full"
-          />
-        </div>
-
-        <button className="w-full md:w-auto px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg text-sm transition">
-          Search
-        </button>
-      </div>
-
-      <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-500">
-        <Briefcase className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-        <h3 className="text-lg font-semibold text-slate-800">Job System Initialized</h3>
-        <p className="text-sm mt-1 max-w-md mx-auto">
-          Job listings and filters will be fully populated when company and job services are enabled in Phase 3.
-        </p>
-      </div>
+      )}
     </div>
   );
 };

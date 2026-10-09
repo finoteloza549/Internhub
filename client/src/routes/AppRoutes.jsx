@@ -14,6 +14,11 @@ import { RegisterPage } from '../pages/public/RegisterPage';
 
 import { StudentDashboardPage } from '../pages/student/StudentDashboardPage';
 import { EmployerDashboardPage } from '../pages/employer/EmployerDashboardPage';
+import { EmployerCompanyPage } from '../pages/employer/EmployerCompanyPage';
+import { EmployerJobsPage } from '../pages/employer/EmployerJobsPage';
+import { CreateJobPage } from '../pages/employer/CreateJobPage';
+import { EditJobPage } from '../pages/employer/EditJobPage';
+
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
 import { ROLES } from '../utils/constants';
 
@@ -45,9 +50,10 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={[ROLES.EMPLOYER]} />}>
         <Route element={<EmployerLayout />}>
           <Route path="/employer/dashboard" element={<EmployerDashboardPage />} />
-          <Route path="/employer/company" element={<div className="p-4 bg-white rounded-xl">Company Profile Setup Placeholder</div>} />
-          <Route path="/employer/jobs" element={<div className="p-4 bg-white rounded-xl">Manage Active Job Postings Placeholder</div>} />
-          <Route path="/employer/jobs/create" element={<div className="p-4 bg-white rounded-xl">Create Job Posting Form Placeholder</div>} />
+          <Route path="/employer/company" element={<EmployerCompanyPage />} />
+          <Route path="/employer/jobs" element={<EmployerJobsPage />} />
+          <Route path="/employer/jobs/create" element={<CreateJobPage />} />
+          <Route path="/employer/jobs/:id/edit" element={<EditJobPage />} />
           <Route path="/employer/applicants" element={<div className="p-4 bg-white rounded-xl">Review Job Applicants Placeholder</div>} />
         </Route>
       </Route>
