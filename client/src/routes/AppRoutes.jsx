@@ -13,6 +13,10 @@ import { LoginPage } from '../pages/public/LoginPage';
 import { RegisterPage } from '../pages/public/RegisterPage';
 
 import { StudentDashboardPage } from '../pages/student/StudentDashboardPage';
+import { StudentProfilePage } from '../pages/student/StudentProfilePage';
+import { StudentApplicationsPage } from '../pages/student/StudentApplicationsPage';
+import { StudentSavedJobsPage } from '../pages/student/StudentSavedJobsPage';
+
 import { EmployerDashboardPage } from '../pages/employer/EmployerDashboardPage';
 import { EmployerCompanyPage } from '../pages/employer/EmployerCompanyPage';
 import { EmployerJobsPage } from '../pages/employer/EmployerJobsPage';
@@ -38,10 +42,10 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={[ROLES.STUDENT]} />}>
         <Route element={<StudentLayout />}>
           <Route path="/student/dashboard" element={<StudentDashboardPage />} />
-          <Route path="/student/profile" element={<div className="p-4 bg-white rounded-xl">Student Profile Management Placeholder</div>} />
+          <Route path="/student/profile" element={<StudentProfilePage />} />
           <Route path="/student/jobs" element={<Navigate to="/jobs" replace />} />
-          <Route path="/student/saved" element={<div className="p-4 bg-white rounded-xl">Saved Jobs Tracker Placeholder</div>} />
-          <Route path="/student/applications" element={<div className="p-4 bg-white rounded-xl">Application Status Pipeline Placeholder</div>} />
+          <Route path="/student/saved" element={<StudentSavedJobsPage />} />
+          <Route path="/student/applications" element={<StudentApplicationsPage />} />
           <Route path="/student/notifications" element={<div className="p-4 bg-white rounded-xl">Notifications Center Placeholder</div>} />
         </Route>
       </Route>

@@ -3,8 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
 import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
+import applicationRoutes from './routes/application.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
@@ -54,8 +56,10 @@ app.get('/api/health', (req, res) => {
 
 // 6. API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // 7. Base API Root
 app.get('/api', (req, res) => {
@@ -64,8 +68,10 @@ app.get('/api', (req, res) => {
     message: 'Welcome to InternHub REST API v1',
     endpoints: {
       auth: '/api/auth',
+      users: '/api/users',
       companies: '/api/companies',
       jobs: '/api/jobs',
+      applications: '/api/applications',
       health: '/api/health',
     },
   });

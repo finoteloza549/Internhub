@@ -8,6 +8,7 @@ import {
   deleteJob,
   updateJobStatus,
 } from '../controllers/job.controller.js';
+import { saveJob, unsaveJob } from '../controllers/user.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { authorize } from '../middleware/role.middleware.js';
 import { validateBody } from '../validators/auth.validator.js';
@@ -18,6 +19,10 @@ const router = express.Router();
 // Public Routes
 router.get('/', getJobs);
 router.get('/:id', getJobById);
+
+// Student Saved Job Bookmark Routes
+router.post('/:id/save', protect, authorize('STUDENT'), saveJob);
+router.delete('/:id/save', protect, authorize('STUDENT'), unsaveJob);
 
 // Employer Protected Routes
 router.get('/employer/my', protect, authorize('EMPLOYER'), getEmployerJobs);
