@@ -7,6 +7,7 @@ import userRoutes from './routes/user.routes.js';
 import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
@@ -60,6 +61,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 7. Base API Root
 app.get('/api', (req, res) => {
@@ -72,6 +74,7 @@ app.get('/api', (req, res) => {
       companies: '/api/companies',
       jobs: '/api/jobs',
       applications: '/api/applications',
+      admin: '/api/admin',
       health: '/api/health',
     },
   });

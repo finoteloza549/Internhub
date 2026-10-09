@@ -25,6 +25,10 @@ import { EditJobPage } from '../pages/employer/EditJobPage';
 import { EmployerApplicantsPage } from '../pages/employer/EmployerApplicantsPage';
 
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
+import { AdminUsersPage } from '../pages/admin/AdminUsersPage';
+import { AdminCompaniesPage } from '../pages/admin/AdminCompaniesPage';
+import { AdminJobsPage } from '../pages/admin/AdminJobsPage';
+import { AdminReportsPage } from '../pages/admin/AdminReportsPage';
 import { ROLES } from '../utils/constants';
 
 export const AppRoutes = () => {
@@ -67,10 +71,10 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/users" element={<div className="p-4 bg-slate-800 rounded-xl">User Accounts Management Placeholder</div>} />
-          <Route path="/admin/companies" element={<div className="p-4 bg-slate-800 rounded-xl">Company Verification Management Placeholder</div>} />
-          <Route path="/admin/jobs" element={<div className="p-4 bg-slate-800 rounded-xl">Job Approvals Console Placeholder</div>} />
-          <Route path="/admin/reports" element={<div className="p-4 bg-slate-800 rounded-xl">Platform Reports & Moderation Placeholder</div>} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/companies" element={<AdminCompaniesPage />} />
+          <Route path="/admin/jobs" element={<AdminJobsPage />} />
+          <Route path="/admin/reports" element={<AdminReportsPage />} />
         </Route>
       </Route>
 
