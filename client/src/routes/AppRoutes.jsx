@@ -22,6 +22,7 @@ import { EmployerCompanyPage } from '../pages/employer/EmployerCompanyPage';
 import { EmployerJobsPage } from '../pages/employer/EmployerJobsPage';
 import { CreateJobPage } from '../pages/employer/CreateJobPage';
 import { EditJobPage } from '../pages/employer/EditJobPage';
+import { EmployerApplicantsPage } from '../pages/employer/EmployerApplicantsPage';
 
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
 import { ROLES } from '../utils/constants';
@@ -58,7 +59,7 @@ export const AppRoutes = () => {
           <Route path="/employer/jobs" element={<EmployerJobsPage />} />
           <Route path="/employer/jobs/create" element={<CreateJobPage />} />
           <Route path="/employer/jobs/:id/edit" element={<EditJobPage />} />
-          <Route path="/employer/applicants" element={<div className="p-4 bg-white rounded-xl">Review Job Applicants Placeholder</div>} />
+          <Route path="/employer/applicants" element={<EmployerApplicantsPage />} />
         </Route>
       </Route>
 

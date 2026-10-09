@@ -2,6 +2,7 @@ import express from 'express';
 import {
   applyForJob,
   getMyApplications,
+  getEmployerApplicants,
   getApplicationById,
   updateApplicationStatus,
 } from '../controllers/application.controller.js';
@@ -17,8 +18,14 @@ const router = express.Router();
 
 router.use(protect);
 
+// Student Endpoints
 router.post('/', authorize('STUDENT'), validateBody(applicationCreateSchema), applyForJob);
 router.get('/my', authorize('STUDENT'), getMyApplications);
+
+// Employer Endpoints
+router.get('/employer/applicants', authorize('EMPLOYER'), getEmployerApplicants);
+
+// Common / Shared Endpoints
 router.get('/:id', getApplicationById);
 router.patch('/:id/status', authorize('EMPLOYER', 'ADMIN'), validateBody(applicationStatusSchema), updateApplicationStatus);
 

@@ -9,6 +9,12 @@ export const applicationService = {
     return await api.get('/applications/my');
   },
 
+  getEmployerApplicants: async (jobId) => {
+    return await api.get('/applications/employer/applicants', {
+      params: jobId ? { jobId } : {},
+    });
+  },
+
   getApplicationById: async (id) => {
     return await api.get(`/applications/${id}`);
   },

@@ -31,6 +31,20 @@ export const getMyApplications = async (req, res, next) => {
   }
 };
 
+export const getEmployerApplicants = async (req, res, next) => {
+  try {
+    const { jobId } = req.query;
+    const applicants = await applicationService.getEmployerApplicants(req.user.id, jobId);
+
+    res.status(200).json({
+      success: true,
+      data: applicants,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getApplicationById = async (req, res, next) => {
   try {
     const application = await applicationService.getApplicationById(
@@ -53,12 +67,14 @@ export const updateApplicationStatus = async (req, res, next) => {
     const { status } = req.body;
     const application = await applicationService.updateApplicationStatus(
       req.params.id,
+      req.user.id,
+      req.user.role,
       status
     );
 
     res.status(200).json({
       success: true,
-      message: `Application status updated to ${status}`,
+      message: `Applicant status updated to ${status}`,
       data: application,
     });
   } catch (error) {

@@ -92,12 +92,56 @@ export const applicationService = {
   },
 
   /**
-   * Update application status (used by Employers / Admins)
+   * Get all applicants for an employer's posted jobs
    */
-  updateApplicationStatus: async (applicationId, status) => {
-    const application = await Application.findById(applicationId);
+  getEmployerApplicants: async (employerId, jobIdFilter = null) => {
+    // Find all job IDs created by this employer
+    const employerJobs = await Job.find({ postedBy: employerId }).select('_id title');
+    const jobIds = employerJobs.map((j) => j._id);
+
+    if (jobIds.length === 0) {
+      return [];
+    }
+
+    const query = { jobId: { $in: jobIds } };
+    if (jobIdFilter) {
+      query.jobId = jobIdFilter;
+    }
+
+    const applications = await Application.find(query)
+      .populate('studentId', 'name email')
+      .populate('jobId', 'title location type status')
+      .sort({ appliedAt: -1 });
+
+    // Attach student profile info (university, skills, phone, cvUrl)
+    const enrichedApplications = await Promise.all(
+      applications.map(async (app) => {
+        const profile = await StudentProfile.findOne({ userId: app.studentId._id }).select(
+          'university skills phone cvUrl location'
+        );
+        return {
+          ...app.toObject(),
+          studentProfile: profile || null,
+        };
+      })
+    );
+
+    return enrichedApplications;
+  },
+
+  /**
+   * Update application status by employer or admin
+   */
+  updateApplicationStatus: async (applicationId, userId, role, status) => {
+    const application = await Application.findById(applicationId).populate('jobId');
+
     if (!application) {
       throw new ApiError(404, 'Application record not found');
+    }
+
+    // Verify employer owns the job linked to this application (unless user is ADMIN)
+    if (role === 'EMPLOYER' && application.jobId.postedBy.toString() !== userId.toString()) {
+      throw new ApiError(403, 'Not authorized to update status for candidates of this job');
     }
 
     application.status = status;
