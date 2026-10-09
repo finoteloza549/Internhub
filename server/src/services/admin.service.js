@@ -4,11 +4,9 @@ import { Job } from '../models/Job.js';
 import { Application } from '../models/Application.js';
 import { Report } from '../models/Report.js';
 import { ApiError } from '../utils/ApiError.js';
+import { notificationService } from './notification.service.js';
 
 export const adminService = {
-  /**
-   * Get high-level platform analytics metrics
-   */
   getPlatformStats: async () => {
     const [
       totalUsers,
@@ -42,9 +40,6 @@ export const adminService = {
     };
   },
 
-  /**
-   * Get all registered users with search & role filters
-   */
   getAllUsers: async (queryParams = {}) => {
     const { search, role, page = 1, limit = 10 } = queryParams;
     const query = {};
@@ -77,16 +72,12 @@ export const adminService = {
     };
   },
 
-  /**
-   * Toggle user account active status (Suspend / Activate)
-   */
   updateUserStatus: async (userId, isActive) => {
     const user = await User.findById(userId);
     if (!user) {
       throw new ApiError(404, 'User account not found');
     }
 
-    // Prevent deactivating primary admin account
     if (user.role === 'ADMIN' && !isActive) {
       throw new ApiError(403, 'Administrator accounts cannot be suspended');
     }
@@ -103,9 +94,6 @@ export const adminService = {
     };
   },
 
-  /**
-   * Get all registered company profiles
-   */
   getAllCompanies: async (queryParams = {}) => {
     const { search, page = 1, limit = 10 } = queryParams;
     const query = {};
@@ -139,9 +127,6 @@ export const adminService = {
     };
   },
 
-  /**
-   * Verify or unverify company profile
-   */
   updateCompanyVerification: async (companyId, isVerified) => {
     const company = await Company.findById(companyId);
     if (!company) {
@@ -154,9 +139,6 @@ export const adminService = {
     return company;
   },
 
-  /**
-   * Get all jobs for admin moderation (including pending/draft/rejected)
-   */
   getAllJobsForAdmin: async (queryParams = {}) => {
     const { status, search, page = 1, limit = 10 } = queryParams;
     const query = {};
@@ -194,9 +176,6 @@ export const adminService = {
     };
   },
 
-  /**
-   * Approve or reject job posting
-   */
   updateJobApproval: async (jobId, status) => {
     const job = await Job.findById(jobId);
     if (!job) {
@@ -206,12 +185,20 @@ export const adminService = {
     job.status = status;
     await job.save();
 
+    // Trigger Notification to Employer
+    if (job.postedBy) {
+      await notificationService.createNotification({
+        userId: job.postedBy,
+        title: 'Job Posting Approval Update',
+        message: `Your job listing '${job.title}' status has been updated to '${status}'.`,
+        type: 'JOB_APPROVAL',
+        link: '/employer/jobs',
+      });
+    }
+
     return job;
   },
 
-  /**
-   * Create a platform report
-   */
   createReport: async (reporterId, reportData) => {
     const report = await Report.create({
       ...reportData,
@@ -220,9 +207,6 @@ export const adminService = {
     return report;
   },
 
-  /**
-   * Get all platform reports
-   */
   getAllReports: async (queryParams = {}) => {
     const { status, page = 1, limit = 10 } = queryParams;
     const query = {};
@@ -252,9 +236,6 @@ export const adminService = {
     };
   },
 
-  /**
-   * Update report status (RESOLVED, DISMISSED, REVIEWED)
-   */
   updateReportStatus: async (reportId, status) => {
     const report = await Report.findById(reportId);
     if (!report) {

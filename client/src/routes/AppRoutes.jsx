@@ -16,6 +16,7 @@ import { StudentDashboardPage } from '../pages/student/StudentDashboardPage';
 import { StudentProfilePage } from '../pages/student/StudentProfilePage';
 import { StudentApplicationsPage } from '../pages/student/StudentApplicationsPage';
 import { StudentSavedJobsPage } from '../pages/student/StudentSavedJobsPage';
+import { StudentNotificationsPage } from '../pages/student/StudentNotificationsPage';
 
 import { EmployerDashboardPage } from '../pages/employer/EmployerDashboardPage';
 import { EmployerCompanyPage } from '../pages/employer/EmployerCompanyPage';
@@ -51,7 +52,7 @@ export const AppRoutes = () => {
           <Route path="/student/jobs" element={<Navigate to="/jobs" replace />} />
           <Route path="/student/saved" element={<StudentSavedJobsPage />} />
           <Route path="/student/applications" element={<StudentApplicationsPage />} />
-          <Route path="/student/notifications" element={<div className="p-4 bg-white rounded-xl">Notifications Center Placeholder</div>} />
+          <Route path="/student/notifications" element={<StudentNotificationsPage />} />
         </Route>
       </Route>
 

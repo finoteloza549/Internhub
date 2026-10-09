@@ -2,6 +2,7 @@ import { Application } from '../models/Application.js';
 import { Job } from '../models/Job.js';
 import { StudentProfile } from '../models/StudentProfile.js';
 import { ApiError } from '../utils/ApiError.js';
+import { notificationService } from './notification.service.js';
 
 export const applicationService = {
   /**
@@ -44,6 +45,17 @@ export const applicationService = {
       cvUrl: finalCvUrl,
       status: 'APPLIED',
     });
+
+    // 6. Trigger Notification to Employer
+    if (job.postedBy) {
+      await notificationService.createNotification({
+        userId: job.postedBy,
+        title: 'New Candidate Application',
+        message: `A candidate has submitted an application for your position '${job.title}'.`,
+        type: 'APPLICATION_SUBMITTED',
+        link: '/employer/applicants',
+      });
+    }
 
     return await application.populate([
       {
@@ -95,7 +107,6 @@ export const applicationService = {
    * Get all applicants for an employer's posted jobs
    */
   getEmployerApplicants: async (employerId, jobIdFilter = null) => {
-    // Find all job IDs created by this employer
     const employerJobs = await Job.find({ postedBy: employerId }).select('_id title');
     const jobIds = employerJobs.map((j) => j._id);
 
@@ -113,7 +124,6 @@ export const applicationService = {
       .populate('jobId', 'title location type status')
       .sort({ appliedAt: -1 });
 
-    // Attach student profile info (university, skills, phone, cvUrl)
     const enrichedApplications = await Promise.all(
       applications.map(async (app) => {
         const profile = await StudentProfile.findOne({ userId: app.studentId._id }).select(
@@ -139,13 +149,21 @@ export const applicationService = {
       throw new ApiError(404, 'Application record not found');
     }
 
-    // Verify employer owns the job linked to this application (unless user is ADMIN)
     if (role === 'EMPLOYER' && application.jobId.postedBy.toString() !== userId.toString()) {
       throw new ApiError(403, 'Not authorized to update status for candidates of this job');
     }
 
     application.status = status;
     await application.save();
+
+    // Trigger Notification to Student
+    await notificationService.createNotification({
+      userId: application.studentId,
+      title: 'Application Status Update',
+      message: `Your application status for '${application.jobId.title}' has been updated to '${status}'.`,
+      type: 'STATUS_CHANGE',
+      link: '/student/applications',
+    });
 
     return application;
   },
