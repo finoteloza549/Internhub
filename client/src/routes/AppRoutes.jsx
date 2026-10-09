@@ -4,6 +4,7 @@ import { PublicLayout } from '../layouts/PublicLayout';
 import { StudentLayout } from '../layouts/StudentLayout';
 import { EmployerLayout } from '../layouts/EmployerLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
+import { ProtectedRoute } from '../components/common/ProtectedRoute';
 
 import { HomePage } from '../pages/public/HomePage';
 import { JobsPage } from '../pages/public/JobsPage';
@@ -14,6 +15,7 @@ import { RegisterPage } from '../pages/public/RegisterPage';
 import { StudentDashboardPage } from '../pages/student/StudentDashboardPage';
 import { EmployerDashboardPage } from '../pages/employer/EmployerDashboardPage';
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
+import { ROLES } from '../utils/constants';
 
 export const AppRoutes = () => {
   return (
@@ -28,31 +30,37 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Student Protected Routes */}
-      <Route element={<StudentLayout />}>
-        <Route path="/student/dashboard" element={<StudentDashboardPage />} />
-        <Route path="/student/profile" element={<div className="p-4 bg-white rounded-xl">Student Profile Placeholder</div>} />
-        <Route path="/student/jobs" element={<Navigate to="/jobs" replace />} />
-        <Route path="/student/saved" element={<div className="p-4 bg-white rounded-xl">Saved Jobs Placeholder</div>} />
-        <Route path="/student/applications" element={<div className="p-4 bg-white rounded-xl">Student Applications Placeholder</div>} />
-        <Route path="/student/notifications" element={<div className="p-4 bg-white rounded-xl">Notifications Placeholder</div>} />
+      <Route element={<ProtectedRoute allowedRoles={[ROLES.STUDENT]} />}>
+        <Route element={<StudentLayout />}>
+          <Route path="/student/dashboard" element={<StudentDashboardPage />} />
+          <Route path="/student/profile" element={<div className="p-4 bg-white rounded-xl">Student Profile Management Placeholder</div>} />
+          <Route path="/student/jobs" element={<Navigate to="/jobs" replace />} />
+          <Route path="/student/saved" element={<div className="p-4 bg-white rounded-xl">Saved Jobs Tracker Placeholder</div>} />
+          <Route path="/student/applications" element={<div className="p-4 bg-white rounded-xl">Application Status Pipeline Placeholder</div>} />
+          <Route path="/student/notifications" element={<div className="p-4 bg-white rounded-xl">Notifications Center Placeholder</div>} />
+        </Route>
       </Route>
 
       {/* Employer Protected Routes */}
-      <Route element={<EmployerLayout />}>
-        <Route path="/employer/dashboard" element={<EmployerDashboardPage />} />
-        <Route path="/employer/company" element={<div className="p-4 bg-white rounded-xl">Company Profile Placeholder</div>} />
-        <Route path="/employer/jobs" element={<div className="p-4 bg-white rounded-xl">Employer Job Management Placeholder</div>} />
-        <Route path="/employer/jobs/create" element={<div className="p-4 bg-white rounded-xl">Create Job Posting Placeholder</div>} />
-        <Route path="/employer/applicants" element={<div className="p-4 bg-white rounded-xl">Applicants Management Placeholder</div>} />
+      <Route element={<ProtectedRoute allowedRoles={[ROLES.EMPLOYER]} />}>
+        <Route element={<EmployerLayout />}>
+          <Route path="/employer/dashboard" element={<EmployerDashboardPage />} />
+          <Route path="/employer/company" element={<div className="p-4 bg-white rounded-xl">Company Profile Setup Placeholder</div>} />
+          <Route path="/employer/jobs" element={<div className="p-4 bg-white rounded-xl">Manage Active Job Postings Placeholder</div>} />
+          <Route path="/employer/jobs/create" element={<div className="p-4 bg-white rounded-xl">Create Job Posting Form Placeholder</div>} />
+          <Route path="/employer/applicants" element={<div className="p-4 bg-white rounded-xl">Review Job Applicants Placeholder</div>} />
+        </Route>
       </Route>
 
       {/* Admin Protected Routes */}
-      <Route element={<AdminLayout />}>
-        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-        <Route path="/admin/users" element={<div className="p-4 bg-slate-800 rounded-xl">Manage Users Placeholder</div>} />
-        <Route path="/admin/companies" element={<div className="p-4 bg-slate-800 rounded-xl">Manage Companies Placeholder</div>} />
-        <Route path="/admin/jobs" element={<div className="p-4 bg-slate-800 rounded-xl">Manage Jobs Approval Placeholder</div>} />
-        <Route path="/admin/reports" element={<div className="p-4 bg-slate-800 rounded-xl">Platform Reports Placeholder</div>} />
+      <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<div className="p-4 bg-slate-800 rounded-xl">User Accounts Management Placeholder</div>} />
+          <Route path="/admin/companies" element={<div className="p-4 bg-slate-800 rounded-xl">Company Verification Management Placeholder</div>} />
+          <Route path="/admin/jobs" element={<div className="p-4 bg-slate-800 rounded-xl">Job Approvals Console Placeholder</div>} />
+          <Route path="/admin/reports" element={<div className="p-4 bg-slate-800 rounded-xl">Platform Reports & Moderation Placeholder</div>} />
+        </Route>
       </Route>
 
       {/* Catch-all 404 Route */}

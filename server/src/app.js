@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import authRoutes from './routes/auth.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
@@ -18,11 +19,10 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(null, true); // Permissive in dev, configurable for production
+        callback(null, true);
       }
     },
     credentials: true,
@@ -50,16 +50,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 6. Base API Router placeholder
+// 6. API Routes
+app.use('/api/auth', authRoutes);
+
+// 7. Base API Root
 app.get('/api', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Welcome to InternHub REST API v1',
-    documentation: '/api/health',
+    endpoints: {
+      auth: '/api/auth',
+      health: '/api/health',
+    },
   });
 });
 
-// 7. Error Handling Middleware
+// 8. Error Handling Middleware
 app.use(notFoundHandler);
 app.use(errorHandler);
 

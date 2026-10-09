@@ -1,9 +1,25 @@
+import { ApiError } from '../utils/ApiError.js';
+
 /**
- * Role-Based Authorization Middleware Placeholder (Implemented in Phase 2)
- * @param  {...string} allowedRoles - List of permitted roles (STUDENT, EMPLOYER, ADMIN)
+ * Role-Based Authorization Middleware
+ * Verifies that the authenticated user possesses one of the required roles.
+ * @param  {...string} allowedRoles - List of permitted roles (e.g. 'STUDENT', 'EMPLOYER', 'ADMIN')
  */
 export const authorize = (...allowedRoles) => {
   return (req, res, next) => {
+    if (!req.user) {
+      return next(new ApiError(401, 'Authentication context missing'));
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return next(
+        new ApiError(
+          403,
+          `User role '${req.user.role}' is not authorized to perform this action`
+        )
+      );
+    }
+
     next();
   };
 };
