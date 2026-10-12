@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { applicationService } from '../../services/application.service';
 import { userService } from '../../services/user.service';
 import { ApplicationCard } from '../../components/applications/ApplicationCard';
+import { RecommendedJobs } from '../../components/dashboard/RecommendedJobs';
 import { Loader } from '../../components/common/Loader';
 import { FileText, Eye, CheckCircle2, Bookmark } from 'lucide-react';
 
@@ -77,6 +78,9 @@ export const StudentDashboardPage = () => {
           <Bookmark className="w-8 h-8 text-purple-600 bg-purple-50 p-1.5 rounded-lg" />
         </div>
       </div>
+
+      {/* AI Recommended Jobs Section */}
+      <RecommendedJobs />
 
       {/* Recent Applications Section */}
       <div className="space-y-4">

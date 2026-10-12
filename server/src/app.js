@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import companyRoutes from './routes/company.routes.js';
@@ -14,7 +15,9 @@ import { notFoundHandler, errorHandler } from './middleware/error.middleware.js'
 const app = express();
 
 // 1. Security HTTP Headers
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allows uploaded file viewing
+}));
 
 // 2. CORS Configuration
 const allowedOrigins = [
@@ -46,7 +49,10 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 5. Health Check Endpoint
+// 5. Static File Serving for Uploaded CVs/Images
+app.use('/uploads', express.static(path.resolve('uploads')));
+
+// 6. Health Check Endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -56,7 +62,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 6. API Routes
+// 7. API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/companies', companyRoutes);
@@ -65,7 +71,7 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 
-// 7. Base API Root
+// 8. Base API Root
 app.get('/api', (req, res) => {
   res.status(200).json({
     success: true,
@@ -83,7 +89,7 @@ app.get('/api', (req, res) => {
   });
 });
 
-// 8. Error Handling Middleware
+// 9. Error Handling Middleware
 app.use(notFoundHandler);
 app.use(errorHandler);
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   getJobs,
+  getRecommendedJobs,
   getJobById,
   getEmployerJobs,
   createJob,
@@ -15,6 +16,9 @@ import { validateBody } from '../validators/auth.validator.js';
 import { jobCreateSchema, jobStatusSchema } from '../validators/job.validator.js';
 
 const router = express.Router();
+
+// Student Recommended Jobs Route
+router.get('/recommended', protect, authorize('STUDENT'), getRecommendedJobs);
 
 // Public Routes
 router.get('/', getJobs);

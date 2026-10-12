@@ -1,4 +1,5 @@
 import { userService } from '../services/user.service.js';
+import { ApiError } from '../utils/ApiError.js';
 
 export const getProfile = async (req, res, next) => {
   try {
@@ -19,6 +20,25 @@ export const updateProfile = async (req, res, next) => {
       success: true,
       message: 'Student profile updated successfully',
       data: profile,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadCv = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw new ApiError(400, 'Please select a document file to upload');
+    }
+
+    const fileUrl = `/uploads/${req.file.filename}`;
+    await userService.updateStudentProfile(req.user.id, { cvUrl: fileUrl });
+
+    res.status(200).json({
+      success: true,
+      message: 'Document uploaded and attached to profile successfully',
+      data: { fileUrl },
     });
   } catch (error) {
     next(error);

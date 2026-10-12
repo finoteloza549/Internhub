@@ -1,9 +1,10 @@
 import { Notification } from '../models/Notification.js';
+import { emitNotification } from '../config/socket.js';
 import { ApiError } from '../utils/ApiError.js';
 
 export const notificationService = {
   /**
-   * Create a notification record
+   * Create a notification record and emit real-time event via Socket.IO
    */
   createNotification: async ({ userId, title, message, type = 'SYSTEM', link = '' }) => {
     try {
@@ -14,6 +15,10 @@ export const notificationService = {
         type,
         link,
       });
+
+      // Emit Real-Time Socket Event
+      emitNotification(userId, notification);
+
       return notification;
     } catch (error) {
       console.error(`[Notification System Error] Failed to create notification: ${error.message}`);

@@ -1,4 +1,5 @@
 import { jobService } from '../services/job.service.js';
+import { matchService } from '../services/match.service.js';
 
 export const getJobs = async (req, res, next) => {
   try {
@@ -6,6 +7,18 @@ export const getJobs = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRecommendedJobs = async (req, res, next) => {
+  try {
+    const recommended = await matchService.getRecommendedJobs(req.user.id);
+    res.status(200).json({
+      success: true,
+      data: recommended,
     });
   } catch (error) {
     next(error);

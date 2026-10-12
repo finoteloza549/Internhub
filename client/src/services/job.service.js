@@ -5,6 +5,14 @@ export const jobService = {
     return await api.get('/jobs', { params });
   },
 
+  getRecommendedJobs: async () => {
+    return await api.get('/jobs/recommended');
+  },
+
+  getEmployerJobs: async () => {
+    return await api.get('/jobs/employer/my');
+  },
+
   getJobById: async (id) => {
     return await api.get(`/jobs/${id}`);
   },

@@ -4,6 +4,7 @@ dotenv.config();
 
 import app from './app.js';
 import { connectDB } from './config/database.js';
+import { initSocket } from './config/socket.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -14,6 +15,9 @@ const startServer = async () => {
   const server = app.listen(PORT, () => {
     console.log(`[Server] InternHub backend listening on http://localhost:${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
   });
+
+  // Attach Real-time Socket.IO Server
+  initSocket(server);
 
   // Handle unhandled promise rejections
   process.on('unhandledRejection', (err) => {
