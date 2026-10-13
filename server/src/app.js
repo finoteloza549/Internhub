@@ -11,6 +11,7 @@ import applicationRoutes from './routes/application.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error.middleware.js';
+import { apiLimiter } from './middleware/rateLimiter.middleware.js';
 
 const app = express();
 
@@ -62,7 +63,10 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 7. API Routes
+// 7. Rate Limiting Middleware
+app.use('/api', apiLimiter);
+
+// 8. API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/companies', companyRoutes);

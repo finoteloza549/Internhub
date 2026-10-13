@@ -53,4 +53,7 @@ const companySchema = new mongoose.Schema(
   }
 );
 
+// Index for search performance
+companySchema.index({ name: 1, industry: 1 });
+
 export const Company = mongoose.model('Company', companySchema);

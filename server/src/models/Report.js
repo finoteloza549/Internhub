@@ -37,4 +37,7 @@ const reportSchema = new mongoose.Schema(
   }
 );
 
+// Performance index for admin report moderation
+reportSchema.index({ status: 1, targetType: 1, createdAt: -1 });
+
 export const Report = mongoose.model('Report', reportSchema);
